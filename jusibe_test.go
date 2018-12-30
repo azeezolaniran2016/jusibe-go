@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/azeezolaniran2016/go-jusibe/mocks"
+	"github.com/azeezolaniran2016/jusibe-go/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"

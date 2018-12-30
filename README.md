@@ -1,2 +1,2 @@
-# go-jusibe
-Go Jusibe API wrapper
+# jusibe-go
+Jusibe API wrapper for Go
