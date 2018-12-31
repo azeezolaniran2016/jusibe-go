@@ -176,7 +176,7 @@ func TestJusibe(t *testing.T) {
 		res, code, err := jusibe.CheckSMSDeliveryStatus(ctx, "xyz123")
 
 		assert.Equal(t, 200, code)
-
+		assert.NoError(t, err)
 		assert.Equal(t, string(StatusSMSDelivered), res.Status)
 		assert.Equal(t, "xyz123", res.MessageID)
 		assert.Equal(t, "2015-05-19 04:34:48", res.DateSent)

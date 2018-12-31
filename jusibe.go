@@ -35,6 +35,7 @@ func (j *Jusibe) createHTTPRequest(ctx context.Context, method, url string) (req
 
 	if err == nil {
 		req.SetBasicAuth(j.publicKey, j.accessToken)
+		req = req.WithContext(ctx)
 	}
 
 	return
@@ -46,7 +47,12 @@ func (j *Jusibe) doHTTPRequest(req *http.Request, response interface{}) (statusC
 	if err != nil {
 		return
 	}
-	defer res.Body.Close()
+	defer func() {
+		closeErr := res.Body.Close()
+		if closeErr != nil {
+			err = fmt.Errorf("%s, %s", err, closeErr)
+		}
+	}()
 
 	statusCode = res.StatusCode
 

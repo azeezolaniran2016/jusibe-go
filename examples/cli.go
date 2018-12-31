@@ -39,7 +39,7 @@ func main() {
 		switch line {
 		case "get_credits":
 			{
-				getCredits(jusibe, scanner)
+				getCredits(jusibe)
 			}
 		case "send_sms":
 			{
@@ -62,7 +62,7 @@ func main() {
 	}
 }
 
-func getCredits(jb *jusibe.Jusibe, scanner *bufio.Scanner) {
+func getCredits(jb *jusibe.Jusibe) {
 	fmt.Println("Fetching credits...")
 
 	res, _, err := jb.CheckSMSCredits(context.Background())
@@ -108,7 +108,7 @@ func checkDeliveryStatus(jb *jusibe.Jusibe, scanner *bufio.Scanner) {
 
 func readLine(scanner *bufio.Scanner, prompt string) (line string) {
 	if prompt != "" {
-		fmt.Printf(prompt)
+		fmt.Print(prompt)
 	}
 	scanner.Scan()
 	line = scanner.Text()
