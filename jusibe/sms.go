@@ -3,11 +3,16 @@ package jusibe
 type smsDeliveryStatus string
 
 const (
-	// StatusSMSRejected ...
+	// StatusSMSRejected is delivery status for rejected SMS
+	// This indicates that the SMS wasn't sent
 	StatusSMSRejected smsDeliveryStatus = "Rejected"
-	// StatusSMSSent ...
+
+	// StatusSMSSent is delivery status for send SMS
+	// This indicates that the SMS was successfully sent but the receipient is yet to receive the SMS
 	StatusSMSSent smsDeliveryStatus = "Sent"
-	// StatusSMSDelivered ...
+
+	// StatusSMSDelivered is delivery status for delivered SMS
+	// This indicates that the receipient received the SMS
 	StatusSMSDelivered smsDeliveryStatus = "Delivered"
 )
 
