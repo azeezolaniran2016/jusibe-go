@@ -1,0 +1,31 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "CSPbwbyzqA6sfORicn4HFtIhF/c=",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "d8f796af33cc11cb798c1aaeb27a4ebc5099927d",
+			"revisionTime": "2018-08-30T19:11:22Z"
+		},
+		{
+			"checksumSHA1": "sW3lJK29Em8lFh94EEM2VsudBdM=",
+			"path": "github.com/golang/mock/gomock",
+			"revision": "e698a2ea17fee71b248fc2bba82fc544c2017f93",
+			"revisionTime": "2018-12-21T17:20:59Z"
+		},
+		{
+			"checksumSHA1": "LuFv4/jlrmFNnDb/5SCSEPAM9vU=",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "5d4384ee4fb2527b0a1256a821ebfc92f91efefc",
+			"revisionTime": "2018-12-26T10:54:42Z"
+		},
+		{
+			"checksumSHA1": "6QB6TZUxUsC82XEtugVx6NHu4lc=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "c45a1382af909f3ed0abc3b8d8e59e6db48ed9d8",
+			"revisionTime": "2018-11-16T15:58:11Z"
+		}
+	],
+	"rootPath": "github.com/azeezolaniran2016/jusibe-go"
+}

@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - 1.11.x
+
+before_install:
+  - go get -u github.com/kardianos/govendor
+  - go get -u github.com/alecthomas/gometalinter && gometalinter --install
+  - govendor sync
+
+script:
+  - gometalinter --vendor --enable=misspell --enable=unparam --deadline=280s ./...
+  - go test -v -cover -coverprofile=coverage.txt -covermode=atomic -race $(go list ./... | grep -v -E "examples|mocks")
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
