@@ -106,13 +106,13 @@ func TestJusibe(t *testing.T) {
 		})
 
 		ctx := context.Background()
-		res, code, err := jusibe.SendSMS(ctx, to, from, message)
+		s, res, err := jusibe.SendSMS(ctx, to, from, message)
 
-		assert.Equal(t, 200, code)
+		assert.Equal(t, 200, res.StatusCode)
 		assert.NoError(t, err)
-		assert.Equal(t, string(StatusSMSSent), res.Status)
-		assert.Equal(t, "xyz123", res.MessageID)
-		assert.Equal(t, 1, res.SMSCreditsUsed)
+		assert.Equal(t, string(StatusSMSSent), s.Status)
+		assert.Equal(t, "xyz123", s.MessageID)
+		assert.Equal(t, 1, s.SMSCreditsUsed)
 	})
 
 	t.Run("CheckSMSCredits", func(t *testing.T) {
@@ -139,11 +139,11 @@ func TestJusibe(t *testing.T) {
 		})
 
 		ctx := context.Background()
-		res, code, err := jusibe.CheckSMSCredits(ctx)
+		sc, res, err := jusibe.CheckSMSCredits(ctx)
 
-		assert.Equal(t, 200, code)
 		assert.NoError(t, err)
-		assert.Equal(t, "100", res.SMSCredits)
+		assert.Equal(t, 200, res.StatusCode)
+		assert.Equal(t, "100", sc.SMSCredits)
 	})
 
 	t.Run("CheckSMSCredits", func(t *testing.T) {
@@ -173,13 +173,13 @@ func TestJusibe(t *testing.T) {
 		})
 
 		ctx := context.Background()
-		res, code, err := jusibe.CheckSMSDeliveryStatus(ctx, "xyz123")
+		ds, res, err := jusibe.CheckSMSDeliveryStatus(ctx, "xyz123")
 
-		assert.Equal(t, 200, code)
+		assert.Equal(t, 200, res.StatusCode)
 		assert.NoError(t, err)
-		assert.Equal(t, string(StatusSMSDelivered), res.Status)
-		assert.Equal(t, "xyz123", res.MessageID)
-		assert.Equal(t, "2015-05-19 04:34:48", res.DateSent)
-		assert.Equal(t, "2015-05-19 04:35:05", res.DateDelivered)
+		assert.Equal(t, string(StatusSMSDelivered), ds.Status)
+		assert.Equal(t, "xyz123", ds.MessageID)
+		assert.Equal(t, "2015-05-19 04:34:48", ds.DateSent)
+		assert.Equal(t, "2015-05-19 04:35:05", ds.DateDelivered)
 	})
 }

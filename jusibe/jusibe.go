@@ -42,19 +42,18 @@ func (j *Jusibe) createHTTPRequest(ctx context.Context, method, url string) (req
 }
 
 // doHTTPRequest ...
-func (j *Jusibe) doHTTPRequest(req *http.Request, response interface{}) (statusCode int, err error) {
-	res, err := j.httpClient.Do(req)
+func (j *Jusibe) doHTTPRequest(req *http.Request, response interface{}) (res *http.Response, err error) {
+	res, err = j.httpClient.Do(req)
 	if err != nil {
 		return
 	}
+
 	defer func() {
 		closeErr := res.Body.Close()
 		if closeErr != nil {
 			err = fmt.Errorf("%s, %s", err, closeErr)
 		}
 	}()
-
-	statusCode = res.StatusCode
 
 	if res.StatusCode > 299 || res.StatusCode < 200 {
 		err = fmt.Errorf("unexpected %d http response code", res.StatusCode)
@@ -67,7 +66,7 @@ func (j *Jusibe) doHTTPRequest(req *http.Request, response interface{}) (statusC
 }
 
 // SendSMS ...
-func (j *Jusibe) SendSMS(ctx context.Context, to, from, message string) (ssr *SMSResponse, statusCode int, err error) {
+func (j *Jusibe) SendSMS(ctx context.Context, to, from, message string) (ssr *SMSResponse, res *http.Response, err error) {
 	// This check is defined in Jusibe API docs
 	if len(from) > 11 {
 		err = errors.New("from (SenderID) allows maximum of eleven (11) characters. See API docs https://jusibe.com/docs/")
@@ -82,13 +81,13 @@ func (j *Jusibe) SendSMS(ctx context.Context, to, from, message string) (ssr *SM
 	}
 
 	ssr = &SMSResponse{}
-	statusCode, err = j.doHTTPRequest(req, ssr)
+	res, err = j.doHTTPRequest(req, ssr)
 
 	return
 }
 
 // CheckSMSCredits ...
-func (j *Jusibe) CheckSMSCredits(ctx context.Context) (scr *SMSCreditsResponse, statusCode int, err error) {
+func (j *Jusibe) CheckSMSCredits(ctx context.Context) (scr *SMSCreditsResponse, res *http.Response, err error) {
 	url := j.apiBaseURL + "get_credits"
 	req, err := j.createHTTPRequest(ctx, http.MethodGet, url)
 
@@ -97,13 +96,13 @@ func (j *Jusibe) CheckSMSCredits(ctx context.Context) (scr *SMSCreditsResponse, 
 	}
 
 	scr = &SMSCreditsResponse{}
-	statusCode, err = j.doHTTPRequest(req, scr)
+	res, err = j.doHTTPRequest(req, scr)
 
 	return
 }
 
 // CheckSMSDeliveryStatus ...
-func (j *Jusibe) CheckSMSDeliveryStatus(ctx context.Context, messageID string) (sds *SMSDeliveryResponse, statusCode int, err error) {
+func (j *Jusibe) CheckSMSDeliveryStatus(ctx context.Context, messageID string) (sds *SMSDeliveryResponse, res *http.Response, err error) {
 	url := fmt.Sprintf("%sdelivery_status?message_id=%s", j.apiBaseURL, messageID)
 	req, err := j.createHTTPRequest(ctx, http.MethodGet, url)
 
@@ -112,7 +111,7 @@ func (j *Jusibe) CheckSMSDeliveryStatus(ctx context.Context, messageID string) (
 	}
 
 	sds = &SMSDeliveryResponse{}
-	statusCode, err = j.doHTTPRequest(req, sds)
+	res, err = j.doHTTPRequest(req, sds)
 
 	return
 }

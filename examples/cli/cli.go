@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	jusibe "github.com/azeezolaniran2016/jusibe-go"
+	jusibe "github.com/azeezolaniran2016/jusibe-go/jusibe"
 )
 
 var (
