@@ -45,7 +45,6 @@ fmt.Printf("%+v\n", creditsResponse)
 ```
 
 ## Contributing
-Bug reports and pull requests are welcome on GitHub at https://github.com/azeezolaniran2016/jusibe-go.
 
 To contribute to this work:
 
@@ -54,6 +53,8 @@ To contribute to this work:
 3. Commit your changes `git commit -am 'Add some feature'`
 4. Push to the branch `git push origin my-new-feature`
 5. Create a Pull Request
+
+or [create an issue](https://github.com/azeezolaniran2016/jusibe-go/issues)
 
 
 ## License
