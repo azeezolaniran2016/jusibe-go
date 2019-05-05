@@ -4,38 +4,39 @@ Package jusibe provides a Jusibe API client.
 Refer to https://jusibe.com/docs/ for more information about Jusibe.
 
 Example Usage:
-		// Create the Jusibe Configuration. Note that your AccessToken and PublicKey are required
-		cfg := &jusibe.Config{
-			PublicKey: os.Getenv("JUSIBE_PUBLIC_KEY"),
-			AccessToken: os.Getenv("JUSIBE_ACCESS_TOKEN"),
-		}
 
-    // Create the client
-    j, err := jusibe.New(cfg)
-    if err != nil {
-        log.Fatal(err)
-		}
+// Create the Jusibe Configuration. Note that your AccessToken and PublicKey are required
+cfg := &jusibe.Config{
+	PublicKey: os.Getenv("JUSIBE_PUBLIC_KEY"),
+	AccessToken: os.Getenv("JUSIBE_ACCESS_TOKEN"),
+}
 
-		// Send SMS
-		to, from, message := "08000000000000", "Azeez", "Hello World"
-		smsResponse, _, err := j.SendSMS(context.Background(), to, from, message)
-		if err != nil {
-			log.Fatal(err)
-		}
+// Create the client
+j, err := jusibe.New(cfg)
+if err != nil {
+		log.Fatal(err)
+}
 
-		// Check Delivery Status
-		deliveryResponse, _, err := j.CheckSMSDeliveryStatus(context.Background(), smsResponse.MessageID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("%+v\n", deliveryResponse)
+// Send SMS
+to, from, message := "08000000000000", "Azeez", "Hello World"
+smsResponse, _, err := j.SendSMS(context.Background(), to, from, message)
+if err != nil {
+	log.Fatal(err)
+}
 
-		// Get SMS credits
-		creditsResponse, _, err := j.CheckSMSCredits(context.Background())
-		if err != nil {
-			log.Fatal("err")
-		}
-		fmt.Printf("%+v\n", creditsResponse)
+// Check Delivery Status
+deliveryResponse, _, err := j.CheckSMSDeliveryStatus(context.Background(), smsResponse.MessageID)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Printf("%+v\n", deliveryResponse)
+
+// Get SMS credits
+creditsResponse, _, err := j.CheckSMSCredits(context.Background())
+if err != nil {
+	log.Fatal("err")
+}
+fmt.Printf("%+v\n", creditsResponse)
 */
 package jusibe
 
