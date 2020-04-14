@@ -177,7 +177,7 @@ func New(cfg *Config) (j *Jusibe, err error) {
 // NewWithHTTPClient creates a new Jusibe client configured using the *jusibe.Config and *http.Client paramerter
 func NewWithHTTPClient(cfg *Config, httpClient *http.Client) (j *Jusibe, err error) {
 	if cfg.AccessToken == "" || cfg.PublicKey == "" {
-		err = errors.New("Failed to create New Jusibe client. accessToken and publicKey are required")
+		err = errors.New("failed to create New Jusibe client. accessToken and publicKey are required")
 		return
 	}
 
