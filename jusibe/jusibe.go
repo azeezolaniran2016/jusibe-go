@@ -49,31 +49,28 @@ import (
 )
 
 const (
-	defaultAPIBaseURL        = "https://jusibe.com/smsapi/"
+	apiBaseURL               = "https://jusibe.com/smsapi"
 	defaultHTTPClientTimeout = (time.Second * 10)
 )
 
 // Config is Jusibe client configuration
 // AccessToken and PublicKey are required fields
-// APIBaseURL defaults to https://jusibe.com/smsapi/
 type Config struct {
 	AccessToken string
 	PublicKey   string
-	APIBaseURL  string
 }
 
 // Jusibe is Jusibe API client
 type Jusibe struct {
 	httpClient  *http.Client
-	apiBaseURL  string
 	publicKey   string
 	accessToken string
 }
 
 // createHTTPRequest is a helper method for creating *http.Request used in external API calls
 // It returns a *http.Request which has Basic Auth and Context set
-func (j *Jusibe) createHTTPRequest(ctx context.Context, method, url string) (req *http.Request, err error) {
-	req, err = http.NewRequest(method, url, nil)
+func (j *Jusibe) createHTTPRequest(ctx context.Context, method, endpoint string) (req *http.Request, err error) {
+	req, err = http.NewRequest(method, (apiBaseURL + endpoint), nil)
 
 	if err == nil {
 		req.SetBasicAuth(j.publicKey, j.accessToken)
@@ -87,6 +84,7 @@ func (j *Jusibe) createHTTPRequest(ctx context.Context, method, url string) (req
 // It writes the response body into the body parameter before closing the response body
 // It returns the *http.Response for convinience to its caller
 func (j *Jusibe) doHTTPRequest(req *http.Request, body interface{}) (res *http.Response, err error) {
+	req.URL.RawQuery = req.URL.Query().Encode()
 	res, err = j.httpClient.Do(req)
 	if err != nil {
 		return
@@ -109,24 +107,51 @@ func (j *Jusibe) doHTTPRequest(req *http.Request, body interface{}) (res *http.R
 	return
 }
 
+func fromIsValid(from string) (err error) {
+	if len(from) > 11 {
+		err = errors.New("from (SenderID) allows maximum of eleven (11) characters. See API docs https://jusibe.com/docs/")
+	}
+	return
+}
+
 // SendSMS sends SMS to the /send_sms endpoint
 // It also returns a *http.Response for convinience to its caller, along with a *SMSResponse and error
 func (j *Jusibe) SendSMS(ctx context.Context, to, from, message string) (ssr *SMSResponse, res *http.Response, err error) {
 	// This check is defined in Jusibe API docs
-	if len(from) > 11 {
-		err = errors.New("from (SenderID) allows maximum of eleven (11) characters. See API docs https://jusibe.com/docs/")
+	if err = fromIsValid(from); err != nil {
 		return
 	}
 
-	url := fmt.Sprintf("%ssend_sms?to=%s&from=%s&message=%s", j.apiBaseURL, to, from, message)
+	endpoint := fmt.Sprintf("/send_sms?to=%s&from=%s&message=%s", to, from, message)
+
+	req, err := j.createHTTPRequest(ctx, http.MethodPost, endpoint)
+	if err != nil {
+		return
+	}
+
+	ssr = new(SMSResponse)
+	res, err = j.doHTTPRequest(req, ssr)
+
+	return
+}
+
+// SendBulkSMS sends SMS to the /bulk/send_sms endpoint
+// It also returns a *http.Response for convinience to its caller, along with a *BulkSMSResponse and error
+func (j *Jusibe) SendBulkSMS(ctx context.Context, to, from, message string) (bsr *BulkSMSResponse, res *http.Response, err error) {
+	// This check is defined in Jusibe API docs
+	if err = fromIsValid(from); err != nil {
+		return
+	}
+
+	url := fmt.Sprintf("/bulk/send_sms?to=%s&from=%s&message=%s", to, from, message)
 
 	req, err := j.createHTTPRequest(ctx, http.MethodPost, url)
 	if err != nil {
 		return
 	}
 
-	ssr = &SMSResponse{}
-	res, err = j.doHTTPRequest(req, ssr)
+	bsr = new(BulkSMSResponse)
+	res, err = j.doHTTPRequest(req, bsr)
 
 	return
 }
@@ -134,8 +159,8 @@ func (j *Jusibe) SendSMS(ctx context.Context, to, from, message string) (ssr *SM
 // CheckSMSCredits checks SMS credits using the /get_credits endpoint
 // It also returns a *http.Response for convinience to its caller, along with a *SMSCreditsReponse and error
 func (j *Jusibe) CheckSMSCredits(ctx context.Context) (scr *SMSCreditsResponse, res *http.Response, err error) {
-	url := j.apiBaseURL + "get_credits"
-	req, err := j.createHTTPRequest(ctx, http.MethodGet, url)
+	endpoint := "/get_credits"
+	req, err := j.createHTTPRequest(ctx, http.MethodGet, endpoint)
 
 	if err != nil {
 		return
@@ -150,14 +175,30 @@ func (j *Jusibe) CheckSMSCredits(ctx context.Context) (scr *SMSCreditsResponse, 
 // CheckSMSDeliveryStatus checks a sent SMS (specified by a message id) delivery status using the /delivery_status endpoint
 // It also returns a *http.Response for convinience to its caller, along with a *SMSDeliveryResponse and error
 func (j *Jusibe) CheckSMSDeliveryStatus(ctx context.Context, messageID string) (sds *SMSDeliveryResponse, res *http.Response, err error) {
-	url := fmt.Sprintf("%sdelivery_status?message_id=%s", j.apiBaseURL, messageID)
-	req, err := j.createHTTPRequest(ctx, http.MethodGet, url)
+	endpoint := "/delivery_status?message_id=" + messageID
+	req, err := j.createHTTPRequest(ctx, http.MethodGet, endpoint)
 
 	if err != nil {
 		return
 	}
 
-	sds = &SMSDeliveryResponse{}
+	sds = new(SMSDeliveryResponse)
+	res, err = j.doHTTPRequest(req, sds)
+
+	return
+}
+
+// CheckBulkSMSStatus checks BulkSMS (specified by a message id) delivery status using the /bulk/status endpoint
+// It also returns a *http.Response for convinience to its caller, along with a *SMSDeliveryResponse and error
+func (j *Jusibe) CheckBulkSMSStatus(ctx context.Context, messageID string) (sds *BulkSMSStatusResponse, res *http.Response, err error) {
+	endpoint := "/bulk/status?bulk_message_id=" + messageID
+	req, err := j.createHTTPRequest(ctx, http.MethodGet, endpoint)
+
+	if err != nil {
+		return
+	}
+
+	sds = new(BulkSMSStatusResponse)
 	res, err = j.doHTTPRequest(req, sds)
 
 	return
@@ -181,15 +222,10 @@ func NewWithHTTPClient(cfg *Config, httpClient *http.Client) (j *Jusibe, err err
 		return
 	}
 
-	if cfg.APIBaseURL == "" {
-		cfg.APIBaseURL = defaultAPIBaseURL
-	}
-
 	j = &Jusibe{
 		httpClient:  httpClient,
 		accessToken: cfg.AccessToken,
 		publicKey:   cfg.PublicKey,
-		apiBaseURL:  cfg.APIBaseURL,
 	}
 
 	return
