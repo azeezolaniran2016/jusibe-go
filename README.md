@@ -36,6 +36,20 @@ if err != nil {
 }
 fmt.Printf("%+v\n", deliveryResponse)
 
+// Send Bulk SMS
+to, from, message := "08000000000000,08050000000,08090000000", "Azeez", "Hello World"
+bulkSMSResponse, _, err := j.SendBulkSMS(context.Background(), to, from, message)
+if err != nil {
+  log.Fatal(err)
+}
+
+// Check Bulk SMS Status
+status, _, err := j.CheckBulkSMSStatus(context.Background(), bulkSMSResponse.BulkMessageID)
+if err != nil {
+  log.Fatal(err)
+}
+fmt.Printf("%+v\n", status)
+
 // Get SMS credits
 creditsResponse, _, err := j.CheckSMSCredits(context.Background())
 if err != nil {
