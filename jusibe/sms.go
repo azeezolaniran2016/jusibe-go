@@ -14,6 +14,10 @@ const (
 	// StatusSMSDelivered is delivery status for delivered SMS
 	// This indicates that the receipient received the SMS
 	StatusSMSDelivered smsDeliveryStatus = "Delivered"
+
+	// StatusBulkSMSSubmitted is submitted status for Submitted Bulk SMS
+	// This indicates that the bulk sms was successfully submitted to the api
+	StatusBulkSMSSubmitted smsDeliveryStatus = "Submitted"
 )
 
 // SMSResponse is response returned from Jusibe `send_sms` endpoint
@@ -34,4 +38,25 @@ type SMSDeliveryResponse struct {
 // SMSCreditsResponse is response returned from Jusibe `get_credits` endpoint
 type SMSCreditsResponse struct {
 	SMSCredits string `json:"sms_credits"`
+}
+
+// BulkSMSResponse is response returned form Jusibe `bulk/send_sms` endpoint
+type BulkSMSResponse struct {
+	Status    string `json:"status"`
+	MessageID string `json:"bulk_message_id"`
+}
+
+// BulkSMSStatusResponse is response from Jusibe `bulk/status` endpoint
+type BulkSMSStatusResponse struct {
+	BulkMessageID string `json:"bulk_message_id"`
+
+	Status    string `json:"status"`
+	Created   string `json:"created"`
+	Processed string `json:"processed"`
+
+	TotalNumbers string `json:"total_numbers"`
+
+	TotalUniqueNumbers  string `json:"total_unique_numbers"`
+	TotalValidNumbers   string `json:"total_valid_numbers"`
+	TotalInvalidNumbers string `json:"total_invalid_numbers"`
 }

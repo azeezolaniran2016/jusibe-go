@@ -45,9 +45,17 @@ func main() {
 			{
 				sendSMS(jusibe, scanner)
 			}
+		case "send_bulk_sms":
+			{
+				sendBulkSMS(jusibe, scanner)
+			}
 		case "delivery_status":
 			{
 				checkDeliveryStatus(jusibe, scanner)
+			}
+		case "bulk_sms_status":
+			{
+				checkBulkSMSStatus(jusibe, scanner)
 			}
 		case "exit":
 			{
@@ -92,6 +100,23 @@ func sendSMS(jb *jusibe.Jusibe, scanner *bufio.Scanner) {
 	fmt.Printf("Response => %+v", res)
 }
 
+func sendBulkSMS(jb *jusibe.Jusibe, scanner *bufio.Scanner) {
+	to := readLine(scanner, "Enter comma separated list destination numbers: ")
+	from := readLine(scanner, "Enter From: ")
+	message := readLine(scanner, "Enter Message: ")
+
+	fmt.Println("Sending Bulk SMS....")
+
+	res, _, err := jb.SendBulkSMS(context.Background(), to, from, message)
+
+	if err != nil {
+		log.Printf("Failed to send SMS - %s\n", err.Error())
+		return
+	}
+
+	fmt.Printf("Response => %+v", res)
+}
+
 func checkDeliveryStatus(jb *jusibe.Jusibe, scanner *bufio.Scanner) {
 	messageID := readLine(scanner, "Enter MessageID: ")
 
@@ -100,6 +125,20 @@ func checkDeliveryStatus(jb *jusibe.Jusibe, scanner *bufio.Scanner) {
 	res, _, err := jb.CheckSMSDeliveryStatus(context.Background(), messageID)
 	if err != nil {
 		log.Printf("Failed to check SMS Delivery status - %s\n", err.Error())
+		return
+	}
+
+	fmt.Printf("Response => %+v", res)
+}
+
+func checkBulkSMSStatus(jb *jusibe.Jusibe, scanner *bufio.Scanner) {
+	messageID := readLine(scanner, "Enter Bulk MessageID: ")
+
+	fmt.Println("Fetching bulk sms status...")
+
+	res, _, err := jb.CheckBulkSMSStatus(context.Background(), messageID)
+	if err != nil {
+		log.Printf("Failed to check bulk sms status - %s\n", err.Error())
 		return
 	}
 
@@ -120,7 +159,9 @@ func printHelp() {
 	fmt.Println("Enter API Method to execute:")
 	fmt.Println("\tget_credits - View remaining credits")
 	fmt.Println("\tsend_sms - Send SMS")
+	fmt.Println("\tsend_bulk_sms - Send Bulk SMS")
 	fmt.Println("\tdelivery_status - Check SMS delivery status")
+	fmt.Println("\tbulk_sms_status - Check Bulk SMS status")
 	fmt.Println("Enter exit to Quit")
 	fmt.Println()
 }
